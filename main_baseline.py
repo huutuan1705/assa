@@ -24,7 +24,6 @@ if __name__ == "__main__":
     parsers.add_argument('--gamma', type=float, default=0.5)
     parsers.add_argument('--margin', type=float, default=0.3)
     parsers.add_argument('--alpha', type=float, default=1)
-    parsers.add_argument('--beta', type=float, default=0.2)
     parsers.add_argument('--num_views', type=int, default=2, help='view 1 - 5')
     parsers.add_argument('--temperature', default=0.07, type=float, help='softmax temperature (default: 0.07)')
     parsers.add_argument('--threads', type=int, default=4)
