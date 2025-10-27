@@ -36,7 +36,7 @@ if __name__ == "__main__":
     model = Siamese_SBIR(args).to(device)
     
     if args.heats_map:
-        inference_model(model, args)
+        get_heats_map(model, args)
         
     if args.inference:
         inference_model(model, args)
