@@ -1,7 +1,7 @@
 import torch
 import argparse
 from phase2.model import Siamese_SBIR
-from phase2.train import train_model
+from phase2.train import train_model, get_heats_map
 from phase2.inferences import inference_model
 
 
@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parsers.add_argument('--use_kaiming_init', type=bool, default=True)
     parsers.add_argument('--load_pretrained', type=bool, default=False)
     parsers.add_argument('--inference', type=bool, default=False)
+    parsers.add_argument('--heats_map', type=bool, default=False)
     
     parsers.add_argument('--batch_size', type=int, default=48)
     parsers.add_argument('--test_batch_size', type=int, default=1)
@@ -34,6 +35,9 @@ if __name__ == "__main__":
     args = parsers.parse_args()
     model = Siamese_SBIR(args).to(device)
     
+    if args.heats_map:
+        inference_model(model, args)
+        
     if args.inference:
         inference_model(model, args)
 

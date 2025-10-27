@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data as data
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from torch import optim
@@ -21,6 +22,33 @@ def get_dataloader(args):
 
     return dataloader_train, dataloader_test
 
+def get_heats_map(model, args):
+    _, dataloader_test = get_dataloader(args)
+    with torch.no_grad():
+        model.eval()
+        for idx, batch in enumerate(tqdm(dataloader_test)):
+            sketch_features_all = torch.FloatTensor().to(device)
+            for data_sketch in batch['sketch_imgs']:
+                sketch_feature = model.sketch_embedding_network(
+                    data_sketch.to(device))
+                sketch_feature = model.sketch_attention(sketch_feature)
+                sketch_features_all = torch.cat(
+                    (sketch_features_all, sketch_feature.detach()))
+                
+            _, attn_w = model.attn(sketch_features_all, return_attn=True)
+            attn = attn_w[0].mean(0).detach().numpy()
+
+            plt.imshow(attn, cmap='viridis')
+            plt.title("Real Attention Map from SSA")
+            plt.xlabel("Key Stroke Index")
+            plt.ylabel("Query Stroke Index")
+            plt.colorbar(label="Attention Weight")
+            plt.tight_layout()
+            plt.savefig("ssa_attention_heatmap.png", dpi=300, bbox_inches='tight')
+            plt.show()
+            
+            break    
+                
 def evaluate_model(model, dataloader_test):
     with torch.no_grad():
         model.eval()
